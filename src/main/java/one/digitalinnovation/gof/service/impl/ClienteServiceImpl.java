@@ -17,7 +17,7 @@ import one.digitalinnovation.gof.service.ViaCepService;
  * injetada pelo Spring (via {@link Autowired}). Com isso, como essa classe é um
  * {@link Service}, ela será tratada como um <b>Singleton</b>.
  * 
- * @author falvojr
+ * @author falvojr / Enp256
  */
 @Service
 public class ClienteServiceImpl implements ClienteService {
@@ -42,8 +42,8 @@ public class ClienteServiceImpl implements ClienteService {
 	@Override
 	public Cliente buscarPorId(Long id) {
 		// Buscar Cliente por ID.
-		Optional<Cliente> cliente = clienteRepository.findById(id);
-		return cliente.get();
+		return clienteRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("Cliente com id (" + id + ") não encontrado."));
 	}
 
 	@Override
@@ -57,6 +57,8 @@ public class ClienteServiceImpl implements ClienteService {
 		Optional<Cliente> clienteBd = clienteRepository.findById(id);
 		if (clienteBd.isPresent()) {
 			salvarClienteComCep(cliente);
+		} else {
+			throw new IllegalArgumentException("Cliente com id (" + id + ") não encontrado.");
 		}
 	}
 
@@ -79,5 +81,4 @@ public class ClienteServiceImpl implements ClienteService {
 		// Inserir Cliente, vinculando o Endereco (novo ou existente).
 		clienteRepository.save(cliente);
 	}
-
 }
